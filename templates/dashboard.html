@@ -19,12 +19,7 @@
                               radial-gradient(circle at 100% 100%, #251a35 0%, transparent 50%);
         }
 
-        .title-container {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            margin-bottom: 2rem;
-        }
+        .title-container { width: 100%; display: flex; justify-content: center; margin-bottom: 2rem; }
 
         .brand-title {
             background: linear-gradient(to right, #22d3ee, #818cf8, #f472b6, #22d3ee);
@@ -38,24 +33,19 @@
         }
 
         @keyframes gradientFlow {
-            0% { background-position: 0% 50%; }
+            0%   { background-position: 0%   50%; }
             100% { background-position: 300% 50%; }
         }
 
         .fixed-legend {
-            position: fixed;
-            top: 1.5rem;
-            right: 2rem;
-            z-index: 100;
-            background: rgba(10, 10, 20, 0.9);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 0.8rem 1.2rem;
-            border-radius: 1rem;
-            width: 280px;
+            position: fixed; top: 1.5rem; right: 2rem; z-index: 100;
+            background: rgba(10,10,20,0.9); backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 0.8rem 1.2rem; border-radius: 1rem; width: 280px;
         }
 
-        #cards-container {
+        /* Two scrollable columns */
+        .results-col {
             height: calc(100vh - 80px);
             overflow-y: auto;
             padding-top: 80px;
@@ -64,8 +54,8 @@
         }
 
         .spectrum-card {
-            background: rgba(25, 25, 45, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(25,25,45,0.4);
+            border: 1px solid rgba(255,255,255,0.05);
             backdrop-filter: blur(10px);
             transition: all 0.3s ease;
         }
@@ -75,122 +65,107 @@
         .glow-prime { border-left: 4px solid #10b981; }
 
         .cyber-input {
-            background: rgba(0, 0, 0, 0.6) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            color: #fff !important;
-            padding: 0.85rem !important;
-            font-size: 0.9rem;
+            background: rgba(0,0,0,0.6) !important;
+            border: 1px solid rgba(255,255,255,0.1) !important;
+            color: #fff !important; padding: 0.85rem !important; font-size: 0.9rem;
         }
         .cyber-input:focus { border-color: #818cf8 !important; outline: none; }
 
         .cyber-select {
-            background: rgba(0, 0, 0, 0.6) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            color: #fff !important;
-            padding: 0.85rem !important;
-            font-size: 0.9rem;
-            appearance: none;
-            cursor: pointer;
+            background: rgba(0,0,0,0.6) !important;
+            border: 1px solid rgba(255,255,255,0.1) !important;
+            color: #fff !important; padding: 0.85rem !important;
+            font-size: 0.9rem; appearance: none; cursor: pointer;
         }
         .cyber-select:focus { border-color: #818cf8 !important; outline: none; }
         .cyber-select option { background: #0a0a14; color: #fff; }
 
         .hud-bar-container { display: flex; gap: 3px; height: 10px; width: 100%; }
-        .hud-segment { flex: 1; height: 100%; border-radius: 1px; background: rgba(255, 255, 255, 0.03); }
+        .hud-segment { flex: 1; height: 100%; border-radius: 1px; background: rgba(255,255,255,0.03); }
 
         .card-content {
-            display: grid;
-            grid-template-rows: 0fr;
+            display: grid; grid-template-rows: 0fr;
             transition: grid-template-rows 0.5s ease, opacity 0.3s ease;
-            opacity: 0;
-            overflow: hidden;
+            opacity: 0; overflow: hidden;
         }
         .card-expanded .card-content { grid-template-rows: 1fr; opacity: 1; }
-        .card-expanded { background: rgba(35, 35, 55, 0.8) !important; padding-bottom: 1.5rem !important; }
+        .card-expanded { background: rgba(35,35,55,0.8) !important; padding-bottom: 1.5rem !important; }
 
         .advisor-box {
-            background: rgba(99, 102, 241, 0.05);
-            border: 1px solid rgba(99, 102, 241, 0.1);
+            background: rgba(99,102,241,0.05);
+            border: 1px solid rgba(99,102,241,0.1);
             border-radius: 1.25rem;
         }
 
-        /* Calculations section */
+        /* Calculations */
         .calc-section {
-            display: grid;
-            grid-template-rows: 0fr;
+            display: grid; grid-template-rows: 0fr;
             transition: grid-template-rows 0.4s ease, opacity 0.3s ease;
-            opacity: 0;
-            overflow: hidden;
+            opacity: 0; overflow: hidden;
         }
         .calc-open { grid-template-rows: 1fr; opacity: 1; }
         .calc-inner { min-height: 0; }
 
+        /* Bigger calc toggle */
         .calc-toggle {
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            display: flex; align-items: center; gap: 8px;
             cursor: pointer;
-            font-size: 9px;
+            font-size: 12px;
             font-weight: 700;
-            letter-spacing: 0.15em;
+            letter-spacing: 0.1em;
             text-transform: uppercase;
-            color: #6366f1;
-            margin-top: 14px;
+            color: #22d3ee;
+            margin-top: 16px;
             user-select: none;
+            padding: 8px 0;
         }
-        .calc-toggle:hover { color: #818cf8; }
+        .calc-toggle:hover { color: #67e8f9; }
+        .calc-toggle i { font-size: 13px; }
 
+        /* Bigger calc table */
         .calc-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         .calc-table td {
-            padding: 5px 8px;
-            font-size: 10px;
+            padding: 7px 10px;
+            font-size: 13px;
             font-family: 'Courier New', monospace;
-            border-bottom: 1px solid rgba(255,255,255,0.03);
+            border-bottom: 1px solid rgba(255,255,255,0.04);
         }
-        .calc-table td:first-child { color: #64748b; width: 45%; }
+        .calc-table td:first-child { color: #64748b; width: 42%; }
         .calc-table td:nth-child(2) { color: #94a3b8; width: 35%; }
         .calc-table td:last-child { color: #22d3ee; text-align: right; font-weight: 700; }
 
         .section-label {
-            font-size: 8px;
-            font-weight: 900;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: #334155;
-            padding: 8px 8px 4px;
+            font-size: 10px; font-weight: 900;
+            letter-spacing: 0.2em; text-transform: uppercase;
+            color: #334155; padding: 10px 10px 4px;
         }
+        .divider { border: none; border-top: 1px solid rgba(255,255,255,0.04); margin: 8px 0; }
 
-        .divider { border: none; border-top: 1px solid rgba(255,255,255,0.04); margin: 6px 0; }
-
-        /* Tab styles */
+        /* Tabs */
         .tab-btn {
-            flex: 1;
-            padding: 8px;
-            font-size: 9px;
-            font-weight: 700;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
+            flex: 1; padding: 8px;
+            font-size: 9px; font-weight: 700;
+            letter-spacing: 0.15em; text-transform: uppercase;
             border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            background: transparent;
-            color: #64748b;
+            border-radius: 8px; cursor: pointer;
+            transition: all 0.2s; background: transparent; color: #64748b;
         }
-        .tab-btn.active {
-            background: rgba(99,102,241,0.15);
-            border-color: rgba(99,102,241,0.4);
-            color: #818cf8;
-        }
+        .tab-btn.active { background: rgba(99,102,241,0.15); border-color: rgba(99,102,241,0.4); color: #818cf8; }
         .tab-btn:hover:not(.active) { color: #94a3b8; border-color: rgba(255,255,255,0.15); }
+
+        /* Column headers */
+        .col-header {
+            font-size: 9px; font-weight: 900;
+            letter-spacing: 0.2em; text-transform: uppercase;
+            color: #334155; margin-bottom: 12px; padding-left: 4px;
+        }
     </style>
 </head>
 <body class="p-4 lg:p-8">
 
     <div class="fixed-legend">
         <div class="flex justify-between text-[10px] font-black mb-2 tracking-widest text-slate-500">
-            <span>POOR (300)</span>
-            <span>PRIME (900)</span>
+            <span>POOR (300)</span><span>PRIME (900)</span>
         </div>
         <div class="h-1.5 w-full rounded-full bg-gradient-to-r from-rose-500 via-amber-400 via-yellow-300 to-emerald-500"></div>
         <div class="flex justify-between text-[10px] font-bold mt-2 text-slate-400">
@@ -198,27 +173,26 @@
         </div>
     </div>
 
-    <div class="max-w-[1600px] mx-auto grid grid-cols-12 gap-10 h-full">
+    <!-- Main 3-column grid: sidebar | ID results | Filter results -->
+    <div class="max-w-[1800px] mx-auto grid grid-cols-12 gap-6 h-full">
 
         <!-- LEFT SIDEBAR -->
-        <aside class="col-span-12 lg:col-span-4 flex flex-col">
+        <aside class="col-span-12 lg:col-span-3 flex flex-col">
             <div class="title-container">
-                <h1 class="text-6xl font-extrabold tracking-tighter italic brand-title">FLOWSCORE</h1>
+                <h1 class="text-5xl font-extrabold tracking-tighter italic brand-title">FLOWSCORE</h1>
             </div>
 
-            <div class="spectrum-card rounded-3xl p-8 border-t-2 border-t-indigo-500/20 shadow-2xl">
-
-                <!-- Search mode tabs -->
+            <div class="spectrum-card rounded-3xl p-6 border-t-2 border-t-indigo-500/20 shadow-2xl">
                 <div class="flex gap-2 mb-6">
                     <button class="tab-btn active" id="tab-id"     onclick="switchTab('id')">By Vendor ID</button>
-                    <button class="tab-btn"         id="tab-filter" onclick="switchTab('filter')">By Risk Filter</button>
+                    <button class="tab-btn"         id="tab-filter" onclick="switchTab('filter')">Risk Filter</button>
                 </div>
 
-                <!-- Tab: Vendor ID -->
+                <!-- Vendor ID panel -->
                 <div id="panel-id">
                     <form id="form-id" class="space-y-5" autocomplete="off">
                         <div class="space-y-2">
-                            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Vendor ID (1 – 1000)</label>
+                            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Vendor ID (1–1000)</label>
                             <input type="number" id="vendor-id" placeholder="e.g. 42" class="cyber-input w-full rounded-xl" min="1" max="1000" required>
                         </div>
                         <p id="error-id" class="text-rose-400 text-xs font-bold hidden"></p>
@@ -228,17 +202,17 @@
                     </form>
                 </div>
 
-                <!-- Tab: Risk Filter -->
+                <!-- Risk Filter panel -->
                 <div id="panel-filter" class="hidden">
                     <form id="form-filter" class="space-y-5" autocomplete="off">
                         <div class="space-y-2">
                             <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Risk Category</label>
                             <select id="risk-filter" class="cyber-select w-full rounded-xl">
                                 <option value="all">All Vendors</option>
-                                <option value="elite">Elite (750 – 900)</option>
-                                <option value="strong">Strong (600 – 749)</option>
-                                <option value="emerging">Emerging (450 – 599)</option>
-                                <option value="poor">High Risk (300 – 449)</option>
+                                <option value="elite">Elite (750–900)</option>
+                                <option value="strong">Strong (600–749)</option>
+                                <option value="emerging">Emerging (450–599)</option>
+                                <option value="poor">High Risk (300–449)</option>
                             </select>
                         </div>
                         <div class="space-y-2">
@@ -251,17 +225,26 @@
                         </button>
                     </form>
                 </div>
-
             </div>
         </aside>
 
-        <!-- RIGHT CARDS -->
-        <section class="col-span-12 lg:col-span-8" id="cards-container"></section>
+        <!-- VENDOR ID RESULTS -->
+        <section class="col-span-12 lg:col-span-5 results-col">
+            <p class="col-header">Vendor ID Searches</p>
+            <div id="id-container"></div>
+        </section>
+
+        <!-- FILTER RESULTS -->
+        <section class="col-span-12 lg:col-span-4 results-col">
+            <p class="col-header">Risk Filter Results</p>
+            <div id="filter-container">
+                <p class="text-[11px] text-slate-600 text-center mt-12">Apply a risk filter to see vendors here</p>
+            </div>
+        </section>
+
     </div>
 
 <script>
-    const container = document.getElementById('cards-container');
-
     // ── Tab switching ──────────────────────────────────────
     function switchTab(tab) {
         document.getElementById('panel-id').classList.toggle('hidden',     tab !== 'id');
@@ -270,7 +253,7 @@
         document.getElementById('tab-filter').classList.toggle('active',   tab === 'filter');
     }
 
-    // ── Single vendor by ID ────────────────────────────────
+    // ── Vendor ID form ─────────────────────────────────────
     document.getElementById('form-id').onsubmit = async (e) => {
         e.preventDefault();
         const errEl    = document.getElementById('error-id');
@@ -284,10 +267,14 @@
         }
 
         const data = await fetchVendor(vendorId, errEl);
-        if (data) { addCard(data); document.getElementById('form-id').reset(); }
+        if (data) {
+            // Prepend to ID column — stacks
+            addCard(data, 'id-container', true);
+            document.getElementById('form-id').reset();
+        }
     };
 
-    // ── Risk filter ────────────────────────────────────────
+    // ── Risk filter form ───────────────────────────────────
     document.getElementById('form-filter').onsubmit = async (e) => {
         e.preventDefault();
         const errEl  = document.getElementById('error-filter');
@@ -308,7 +295,12 @@
                 errEl.classList.remove('hidden');
                 return;
             }
-            data.vendors.forEach(v => addCard(v));
+
+            // REPLACE filter column entirely
+            const fc = document.getElementById('filter-container');
+            fc.innerHTML = '';
+            data.vendors.forEach(v => addCard(v, 'filter-container', false));
+
         } catch (err) {
             errEl.textContent = 'Could not connect to server.';
             errEl.classList.remove('hidden');
@@ -324,7 +316,7 @@
                 body:    JSON.stringify({ vendor_id: vendorId })
             });
             if (res.status === 404) {
-                errEl.textContent = `Vendor ID ${vendorId} not found. Try 1–1000.`;
+                errEl.textContent = `Vendor ID ${vendorId} not found.`;
                 errEl.classList.remove('hidden');
                 return null;
             }
@@ -332,14 +324,14 @@
             if (data.error) { errEl.textContent = 'Error: ' + data.error; errEl.classList.remove('hidden'); return null; }
             return data;
         } catch (err) {
-            errEl.textContent = 'Could not connect to server. Make sure Flask is running.';
+            errEl.textContent = 'Could not connect to server.';
             errEl.classList.remove('hidden');
             return null;
         }
     }
 
-    // ── Add card to UI ─────────────────────────────────────
-    function addCard(data) {
+    // ── Add card ───────────────────────────────────────────
+    function addCard(data, containerId, prepend) {
         const score = data.flowscore;
         const raw   = data.raw_values;
         const met   = data.metrics;
@@ -348,72 +340,67 @@
         const nTxns  = Math.min(raw.avg_weekly_transactions / 50, 1);
         const nMerch = Math.min(raw.unique_merchants / 20, 1);
         const stab   = met["Income stability"]        / 100;
-        const disc   = met["Bill payment discipline"] / 100;
         const sav    = met["Savings behaviour"]       / 100;
 
         let glow = "glow-risk";
         if      (score >= 750) glow = "glow-prime";
         else if (score >= 450) glow = "glow-mid";
 
-        const cardId = `card-${data.vendor_id}-${Date.now()}`;
-        const calcId = `calc-${data.vendor_id}-${Date.now()}`;
+        const uid    = `${data.vendor_id}-${Date.now()}`;
+        const cardId = `card-${uid}`;
+        const calcId = `calc-${uid}`;
 
         const card = document.createElement('div');
         card.className = `spectrum-card rounded-[1.25rem] cursor-pointer group mb-4 transition-all p-4 ${glow}`;
         card.id = cardId;
 
         card.innerHTML = `
-            <div class="flex items-center justify-between" onclick="document.getElementById('${cardId}').classList.toggle('card-expanded')">
-                <div class="flex items-center gap-5">
-                    <div class="h-10 w-10 bg-indigo-500/10 rounded-xl flex items-center justify-center text-indigo-300 font-bold border border-white/5">
+            <div class="flex items-center justify-between"
+                 onclick="document.getElementById('${cardId}').classList.toggle('card-expanded')">
+                <div class="flex items-center gap-4">
+                    <div class="h-10 w-10 bg-indigo-500/10 rounded-xl flex items-center justify-center text-indigo-300 font-bold border border-white/5 text-sm">
                         ${data.vendor_id}
                     </div>
                     <div>
-                        <h3 class="text-white font-bold text-lg leading-none">Vendor #${data.vendor_id}</h3>
-                        <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest mt-1">ID: FS-${data.vendor_id}</p>
+                        <h3 class="text-white font-bold text-base leading-none">Vendor #${data.vendor_id}</h3>
+                        <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest mt-1">FS-${data.vendor_id}</p>
                     </div>
                 </div>
-                <div class="flex items-center gap-8">
+                <div class="flex items-center gap-6">
                     <div class="text-right">
-                        <div class="text-3xl font-black text-white italic tracking-tighter">${score}</div>
-                        <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Score</p>
+                        <div class="text-2xl font-black text-white italic tracking-tighter">${score}</div>
+                        <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">${data.decision}</p>
                     </div>
-                    <i class="fas fa-chevron-down text-slate-700 transition-colors"></i>
+                    <i class="fas fa-chevron-down text-slate-700"></i>
                 </div>
             </div>
 
             <div class="card-content">
-                <div class="min-h-0 pt-6 mt-6 border-t border-white/5">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div class="grid grid-cols-1 gap-4">
+                <div class="min-h-0 pt-5 mt-5 border-t border-white/5">
+                    <div class="grid grid-cols-1 gap-8">
+                        <div class="grid grid-cols-1 gap-3">
                             ${createHUDBar("Weekly Transactions", nTxns * 100, "#22d3ee")}
                             ${createHUDBar("Unique Merchants",    nMerch * 100, "#fbbf24")}
                             ${createHUDBar("Income Stability",    stab * 100,   "#10b981")}
                             ${createHUDBar("Savings",             sav * 100,    "#f472b6")}
                         </div>
 
-                        <div class="advisor-box p-5 flex flex-col justify-between">
-                            <div>
-                                <p class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-2">Strategic Recommendation</p>
-                                <p class="text-sm text-slate-300 leading-relaxed font-medium italic">"${getSimpleVerdict(score)}"</p>
-                            </div>
-                            <div class="mt-4 flex justify-between items-center opacity-30 text-[9px] font-bold uppercase">
-                                <span>Core_v5.1_Stable</span>
-                                <i class="fas fa-chart-line text-lg"></i>
-                            </div>
+                        <div class="advisor-box p-4">
+                            <p class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-2">Strategic Recommendation</p>
+                            <p class="text-sm text-slate-300 leading-relaxed font-medium italic">"${getSimpleVerdict(score)}"</p>
                         </div>
                     </div>
 
-                    <!-- Calculations toggle -->
-                    <div class="calc-toggle" onclick="toggleCalc('${calcId}', this)">
-                        <i class="fas fa-calculator text-xs"></i>
+                    <!-- Show Calculations toggle -->
+                    <div class="calc-toggle" onclick="toggleCalc('${calcId}', this); event.stopPropagation();">
+                        <i class="fas fa-calculator"></i>
                         <span>SHOW CALCULATIONS</span>
-                        <i class="fas fa-chevron-down text-xs ml-auto transition-transform" id="icon-${calcId}"></i>
+                        <i class="fas fa-chevron-down ml-auto transition-transform" id="icon-${calcId}"></i>
                     </div>
 
                     <div class="calc-section" id="${calcId}">
                         <div class="calc-inner">
-                            <div style="background:rgba(0,0,0,0.3);border-radius:12px;padding:12px;margin-top:8px;border:1px solid rgba(255,255,255,0.04)">
+                            <div style="background:rgba(0,0,0,0.35);border-radius:12px;padding:14px;margin-top:8px;border:1px solid rgba(255,255,255,0.05)">
 
                                 <div class="section-label">Raw UPI Data</div>
                                 <table class="calc-table">
@@ -439,7 +426,7 @@
                                 <div class="section-label">FlowScore Calculation</div>
                                 <table class="calc-table">
                                     <tr><td>XGBoost probability</td><td></td><td>${data.prob}</td></tr>
-                                    <tr><td>FlowScore</td><td>300 + (${data.prob} × 600)</td><td style="color:#818cf8">${score}</td></tr>
+                                    <tr><td>FlowScore</td><td>300 + (${data.prob} × 600)</td><td style="color:#818cf8;font-size:14px">${score}</td></tr>
                                 </table>
 
                             </div>
@@ -450,7 +437,9 @@
             </div>
         `;
 
-        container.prepend(card);
+        const container = document.getElementById(containerId);
+        if (prepend) container.prepend(card);
+        else         container.appendChild(card);
     }
 
     // ── Toggle calculations ────────────────────────────────
@@ -461,7 +450,6 @@
         section.classList.toggle('calc-open', !isOpen);
         icon.style.transform = isOpen ? '' : 'rotate(180deg)';
         el.querySelector('span').textContent = isOpen ? 'SHOW CALCULATIONS' : 'HIDE CALCULATIONS';
-        event.stopPropagation();
     }
 
     // ── HUD bar ────────────────────────────────────────────
@@ -474,8 +462,7 @@
         return `
             <div>
                 <div class="flex justify-between text-[9px] font-bold text-slate-500 mb-1.5 uppercase tracking-widest">
-                    <span>${label}</span>
-                    <span style="color:${color}">${Math.round(pct)}%</span>
+                    <span>${label}</span><span style="color:${color}">${Math.round(pct)}%</span>
                 </div>
                 <div class="hud-bar-container">${segments}</div>
             </div>`;
@@ -483,10 +470,10 @@
 
     // ── Verdict ────────────────────────────────────────────
     function getSimpleVerdict(s) {
-        if      (s < 450)  return "Critical volatility detected. Business shows inconsistent cash flow and insufficient reserves. Support is not recommended at this stage.";
-        else if (s < 600)  return "Limited stability observed. While the business is operational, it lacks the volume for major expansion. Monitor closely for 30 days.";
-        else if (s < 750)  return "Steady performance with healthy merchant diversity. This business is a safe candidate for standard credit and moderate growth support.";
-        else               return "Exceptional financial health and discipline. Business demonstrates high-tier stability and is ready for full-scale premium support.";
+        if      (s < 450) return "Critical volatility detected. Business shows inconsistent cash flow and insufficient reserves. Support is not recommended at this stage.";
+        else if (s < 600) return "Limited stability observed. While the business is operational, it lacks the volume for major expansion. Monitor closely for 30 days.";
+        else if (s < 750) return "Steady performance with healthy merchant diversity. This business is a safe candidate for standard credit and moderate growth support.";
+        else              return "Exceptional financial health and discipline. Business demonstrates high-tier stability and is ready for full-scale premium support.";
     }
 </script>
 </body>

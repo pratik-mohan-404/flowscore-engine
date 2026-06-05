@@ -1,0 +1,22 @@
+# Trained models — regenerate by running train.py
+models/*.pkl
+
+# Generated datasets — regenerate by running generate_data.py
+data/*.csv
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# VS Code
+.vscode/
+
+# Environment
+.env
+venv/
+env/
+
+# OS
+.DS_Store
+Thumbs.db
