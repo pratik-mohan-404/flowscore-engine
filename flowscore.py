@@ -35,7 +35,6 @@ def calculate_features(vendor):
         "savings_score":           round(sr,        4),
         "temporal_score":          round(bpt,       4)
     }
-
     raw = {
         "avg_weekly_transactions": round(awt, 2),
         "unique_merchants":        round(um,  2),
@@ -44,7 +43,6 @@ def calculate_features(vendor):
         "savings_ratio":           round(sr,  3),
         "bill_payment_timing":     round(bpt, 3)
     }
-
     return eng, raw
 
 def score_vendor(vendor):
@@ -54,7 +52,6 @@ def score_vendor(vendor):
     prob     = float(model.predict_proba(X_scaled)[0][1])
     score    = round(300 + (prob * 600), 2)
     decision = "Creditworthy" if score >= 600 else "High Risk"
-
     return {
         "vendor_id":  int(vendor["vendor_id"]),
         "flowscore":  score,
@@ -71,6 +68,13 @@ def score_vendor(vendor):
         }
     }
 
+# ── Pre-compute all vendor scores on startup ───────────────
+print("Pre-computing all vendor scores...")
+_df            = pd.read_csv(os.path.join(DATA_DIR, 'upi_transactions.csv'))
+ALL_SCORES     = [score_vendor(row) for _, row in _df.iterrows()]
+ALL_SCORES_MAP = {v["vendor_id"]: v for v in ALL_SCORES}
+print(f"Done — {len(ALL_SCORES)} vendors scored and cached.")
+
 @app.route("/")
 def home():
     return render_template("dashboard.html")
@@ -80,14 +84,10 @@ def predict():
     try:
         data      = request.json
         vendor_id = int(data.get("vendor_id", -1))
-        df        = pd.read_csv(os.path.join(DATA_DIR, 'upi_transactions.csv'))
-        vendor    = df[df["vendor_id"] == vendor_id]
-
-        if vendor.empty:
+        result    = ALL_SCORES_MAP.get(vendor_id)
+        if not result:
             return jsonify({"error": "not_found"}), 404
-
-        return jsonify(score_vendor(vendor.iloc[0]))
-
+        return jsonify(result)
     except Exception as e:
         print(f"Error: {e}")
         return jsonify({"error": str(e)}), 500
@@ -99,10 +99,6 @@ def filter_vendors():
         filter = data.get("filter", "all")
         top_n  = int(data.get("top_n", 5))
 
-        df      = pd.read_csv(os.path.join(DATA_DIR, 'upi_transactions.csv'))
-        results = [score_vendor(row) for _, row in df.iterrows()]
-
-        # Apply filter
         ranges = {
             "elite":    (750, 900),
             "strong":   (600, 749),
@@ -110,12 +106,9 @@ def filter_vendors():
             "poor":     (300, 449),
             "all":      (300, 900)
         }
-        lo, hi    = ranges.get(filter, (300, 900))
-        filtered  = [v for v in results if lo <= v["flowscore"] <= hi]
-
-        # Sort by score descending and take top N
-        filtered  = sorted(filtered, key=lambda x: x["flowscore"], reverse=True)[:top_n]
-
+        lo, hi   = ranges.get(filter, (300, 900))
+        filtered = [v for v in ALL_SCORES if lo <= v["flowscore"] <= hi]
+        filtered = sorted(filtered, key=lambda x: x["flowscore"], reverse=True)[:top_n]
         return jsonify({"vendors": filtered})
 
     except Exception as e:
