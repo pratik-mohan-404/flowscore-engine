@@ -119,7 +119,7 @@
             border-bottom: 1px solid rgba(255,255,255,0.04);
         }
         .calc-table td:first-child { color: #e2e8f0; width: 42%; }
-        .calc-table td:nth-child(2) { color: #f472b6; width: 35%; }
+        .calc-table td:nth-child(2) { color: #22d3ee; width: 35%; }
         .calc-table td:last-child { color: #22d3ee; text-align: right; font-weight: 700; }
 
         .section-label {
@@ -163,6 +163,7 @@
                     <button class="tab-btn"         id="tab-filter" onclick="switchTab('filter')">Risk Filter</button>
                 </div>
 
+                <!-- Vendor ID panel -->
                 <div id="panel-id">
                     <form id="form-id" class="space-y-5" autocomplete="off">
                         <div class="space-y-2">
@@ -173,9 +174,13 @@
                         <button type="submit" class="w-full bg-gradient-to-r from-indigo-600 to-violet-700 hover:brightness-110 text-white font-bold py-4 rounded-xl transition-all shadow-lg active:scale-95 text-[10px] tracking-[0.3em]">
                             ANALYZE NOW
                         </button>
+                        <button type="button" onclick="clearAll()" class="w-full bg-transparent border border-rose-500/40 hover:border-rose-500 text-rose-400 hover:text-rose-300 font-bold py-3 rounded-xl transition-all text-[10px] tracking-[0.3em] mt-1">
+                            CLEAR ALL
+                        </button>
                     </form>
                 </div>
 
+                <!-- Risk Filter panel -->
                 <div id="panel-filter" class="hidden">
                     <form id="form-filter" class="space-y-5" autocomplete="off">
                         <div class="space-y-2">
@@ -192,9 +197,19 @@
                             <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Show top N vendors</label>
                             <input type="number" id="top-n" placeholder="e.g. 5" class="cyber-input w-full rounded-xl" min="1" max="50" value="5">
                         </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Sort order</label>
+                            <select id="sort-order" class="cyber-select w-full rounded-xl">
+                                <option value="desc">Highest score first</option>
+                                <option value="asc">Lowest score first</option>
+                            </select>
+                        </div>
                         <p id="error-filter" class="text-rose-400 text-xs font-bold hidden"></p>
                         <button type="submit" class="w-full bg-gradient-to-r from-indigo-600 to-violet-700 hover:brightness-110 text-white font-bold py-4 rounded-xl transition-all shadow-lg active:scale-95 text-[10px] tracking-[0.3em]">
                             FILTER VENDORS
+                        </button>
+                        <button type="button" onclick="clearAll()" class="w-full bg-transparent border border-rose-500/40 hover:border-rose-500 text-rose-400 hover:text-rose-300 font-bold py-3 rounded-xl transition-all text-[10px] tracking-[0.3em] mt-1">
+                            CLEAR ALL
                         </button>
                     </form>
                 </div>
@@ -212,6 +227,10 @@
         document.getElementById('panel-filter').classList.toggle('hidden', tab !== 'filter');
         document.getElementById('tab-id').classList.toggle('active',       tab === 'id');
         document.getElementById('tab-filter').classList.toggle('active',   tab === 'filter');
+    }
+
+    function clearAll() {
+        container.innerHTML = '';
     }
 
     document.getElementById('form-id').onsubmit = async (e) => {
@@ -233,11 +252,12 @@
         const errEl  = document.getElementById('error-filter');
         errEl.classList.add('hidden');
         const filter = document.getElementById('risk-filter').value;
-        const topN   = parseInt(document.getElementById('top-n').value) || 5;
+        const topN      = parseInt(document.getElementById('top-n').value) || 5;
+        const sortOrder = document.getElementById('sort-order').value;
         try {
             const res  = await fetch('/filter', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ filter, top_n: topN })
+                body: JSON.stringify({ filter, top_n: topN, sort_order: sortOrder })
             });
             const data = await res.json();
             if (data.error) { errEl.textContent = data.error; errEl.classList.remove('hidden'); return; }
@@ -288,6 +308,7 @@
 
         let glow = "glow-risk";
         if      (score >= 750) glow = "glow-prime";
+        else if (score >= 600) glow = "glow-prime";
         else if (score >= 450) glow = "glow-mid";
 
         const uid    = `${data.vendor_id}-${Date.now()}`;
@@ -313,7 +334,7 @@
                 <div class="flex items-center gap-8">
                     <div class="text-right">
                         <div class="text-3xl font-black text-white italic tracking-tighter">${score}</div>
-                        <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">${data.decision}</p>
+                        <p class="text-[9px] font-bold uppercase tracking-widest ${score >= 550 && score < 600 ? 'text-amber-400' : 'text-slate-500'}">${score >= 550 && score < 600 ? '⚠ NEEDS REVIEW' : data.decision}</p>
                     </div>
                     <i class="fas fa-chevron-down text-slate-700 transition-colors"></i>
                 </div>
@@ -414,10 +435,11 @@
     }
 
     function getSimpleVerdict(s) {
-        if      (s < 450) return "Critical volatility detected. Business shows inconsistent cash flow and insufficient reserves. Support is not recommended at this stage.";
-        else if (s < 600) return "Limited stability observed. While the business is operational, it lacks the volume for major expansion. Monitor closely for 30 days.";
-        else if (s < 750) return "Steady performance with healthy merchant diversity. This business is a safe candidate for standard credit and moderate growth support.";
-        else              return "Exceptional financial health and discipline. Business demonstrates high-tier stability and is ready for full-scale premium support.";
+        if      (s < 450)  return "Critical volatility detected. Business shows inconsistent cash flow and insufficient reserves. Support is not recommended at this stage.";
+        else if (s < 550)  return "Limited stability observed. While the business is operational, it lacks the volume for major expansion. Monitor closely for 30 days.";
+        else if (s < 600)  return "Borderline case detected. This vendor shows promising behavioral signals but falls just short of the approval threshold. Recommend manual review, document verification, and consideration for a reduced trial loan before full credit approval.";
+        else if (s < 750)  return "Steady performance with healthy merchant diversity. This business is a safe candidate for standard credit and moderate growth support.";
+        else               return "Exceptional financial health and discipline. Business demonstrates high-tier stability and is ready for full-scale premium support.";
     }
 </script>
 </body>

@@ -108,7 +108,8 @@ def filter_vendors():
         }
         lo, hi   = ranges.get(filter, (300, 900))
         filtered = [v for v in ALL_SCORES if lo <= v["flowscore"] <= hi]
-        filtered = sorted(filtered, key=lambda x: x["flowscore"], reverse=True)[:top_n]
+        sort_order = data.get("sort_order", "desc")
+        filtered   = sorted(filtered, key=lambda x: x["flowscore"], reverse=(sort_order == "desc"))[:top_n]
         return jsonify({"vendors": filtered})
 
     except Exception as e:
