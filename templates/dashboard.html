@@ -37,14 +37,15 @@
             100% { background-position: 300% 50%; }
         }
 
-        .fixed-legend {
-            position: fixed; top: 1.5rem; right: 2rem; z-index: 100;
-            background: rgba(10,10,20,0.9); backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 0.8rem 1.2rem; border-radius: 1rem; width: 280px;
+        #cards-container {
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+            padding-top: 80px;
+            scrollbar-width: thin;
+            scrollbar-color: #4f46e5 transparent;
         }
 
-        #cards-container {
+        #db-container {
             height: calc(100vh - 80px);
             overflow-y: auto;
             padding-top: 80px;
@@ -136,22 +137,74 @@
         }
         .tab-btn.active { background: rgba(99,102,241,0.15); border-color: rgba(99,102,241,0.4); color: #818cf8; }
         .tab-btn:hover:not(.active) { color: #94a3b8; border-color: rgba(255,255,255,0.15); }
+
+        /* Database table */
+        .db-table { width: 100%; border-collapse: collapse; }
+        .db-table th {
+            padding: 10px 12px; font-size: 9px; font-weight: 900;
+            letter-spacing: 0.15em; text-transform: uppercase;
+            color: #475569; border-bottom: 1px solid rgba(255,255,255,0.05);
+            text-align: left; cursor: pointer; user-select: none;
+        }
+        .db-table th:hover { color: #818cf8; }
+        .db-table td {
+            padding: 10px 12px; font-size: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            color: #94a3b8;
+        }
+        .db-table tr:hover td { background: rgba(99,102,241,0.05); cursor: pointer; }
+        .db-table tr:hover td { color: #e2e8f0; }
+
+        .badge {
+            display: inline-block; padding: 2px 8px; border-radius: 99px;
+            font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+        }
+        .badge-elite    { background: rgba(16,185,129,0.15); color: #10b981; }
+        .badge-strong   { background: rgba(99,102,241,0.15); color: #818cf8; }
+        .badge-emerging { background: rgba(251,191,36,0.15);  color: #fbbf24; }
+        .badge-poor     { background: rgba(244,63,94,0.15);   color: #f43f5e; }
+        .badge-review   { background: rgba(251,191,36,0.15);  color: #f59e0b; }
+
+        .sort-arrow { margin-left: 4px; opacity: 0.4; }
+        .sort-arrow.active { opacity: 1; color: #818cf8; }
     </style>
 </head>
 <body class="p-4 lg:p-8">
 
-    <div class="fixed-legend">
-        <div class="flex justify-between text-[10px] font-black mb-2 tracking-widest text-slate-500">
-            <span>POOR (300)</span><span>PRIME (900)</span>
+    <!-- Top right: Vendor counts + Legend -->
+    <div style="position:fixed;top:1.5rem;right:2rem;z-index:100;display:flex;flex-direction:row-reverse;gap:12px;align-items:stretch;">
+        <div style="background:rgba(10,10,20,0.9);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.1);padding:0.8rem 1.2rem;border-radius:1rem;width:280px;">
+            <div class="flex justify-between text-[10px] font-black mb-2 tracking-widest text-slate-500">
+                <span>POOR (300)</span><span>PRIME (900)</span>
+            </div>
+            <div class="h-1.5 w-full rounded-full bg-gradient-to-r from-rose-500 via-amber-400 via-yellow-300 to-emerald-500"></div>
+            <div class="flex justify-between text-[10px] font-bold mt-2 text-slate-400">
+                <span>300</span><span>450</span><span>600</span><span>750</span><span>900</span>
+            </div>
         </div>
-        <div class="h-1.5 w-full rounded-full bg-gradient-to-r from-rose-500 via-amber-400 via-yellow-300 to-emerald-500"></div>
-        <div class="flex justify-between text-[10px] font-bold mt-2 text-slate-400">
-            <span>300</span><span>450</span><span>600</span><span>750</span><span>900</span>
+        <div style="background:rgba(10,10,20,0.9);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.1);padding:0.8rem 1.2rem;border-radius:1rem;display:flex;gap:20px;align-items:center;">
+            <div class="text-center">
+                <div class="text-[13px] font-black text-emerald-400" id="stat-elite">—</div>
+                <div class="text-[8px] text-slate-600 uppercase tracking-widest mt-0.5">Elite</div>
+            </div>
+            <div class="text-center">
+                <div class="text-[13px] font-black text-indigo-400" id="stat-strong">—</div>
+                <div class="text-[8px] text-slate-600 uppercase tracking-widest mt-0.5">Strong</div>
+            </div>
+            <div class="text-center">
+                <div class="text-[13px] font-black text-amber-400" id="stat-emerging">—</div>
+                <div class="text-[8px] text-slate-600 uppercase tracking-widest mt-0.5">Emerging</div>
+            </div>
+            <div class="text-center">
+                <div class="text-[13px] font-black text-rose-400" id="stat-poor">—</div>
+                <div class="text-[8px] text-slate-600 uppercase tracking-widest mt-0.5">High Risk</div>
+            </div>
         </div>
     </div>
 
     <div class="max-w-[1600px] mx-auto grid grid-cols-12 gap-10 h-full">
 
+        <!-- LEFT SIDEBAR -->
         <aside class="col-span-12 lg:col-span-4 flex flex-col">
             <div class="title-container">
                 <h1 class="text-6xl font-extrabold tracking-tighter italic brand-title">FLOWSCORE</h1>
@@ -159,8 +212,9 @@
 
             <div class="spectrum-card rounded-3xl p-8 border-t-2 border-t-indigo-500/20 shadow-2xl">
                 <div class="flex gap-2 mb-6">
-                    <button class="tab-btn active" id="tab-id"     onclick="switchTab('id')">By Vendor ID</button>
+                    <button class="tab-btn active" id="tab-id"     onclick="switchTab('id')">Vendor ID</button>
                     <button class="tab-btn"         id="tab-filter" onclick="switchTab('filter')">Risk Filter</button>
+                    <button class="tab-btn"         id="tab-db"     onclick="switchTab('db')">Database</button>
                 </div>
 
                 <!-- Vendor ID panel -->
@@ -213,26 +267,96 @@
                         </button>
                     </form>
                 </div>
+
+                <!-- Database panel -->
+                <div id="panel-db" class="hidden">
+                    <div class="space-y-5">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Search by Vendor ID</label>
+                            <input type="number" id="db-search" placeholder="e.g. 42" class="cyber-input w-full rounded-xl" min="1" max="1000"
+                                   oninput="loadDatabase()">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Filter by Category</label>
+                            <select id="db-filter" class="cyber-select w-full rounded-xl" onchange="loadDatabase()">
+                                <option value="all">All Vendors</option>
+                                <option value="elite">Elite (750–900)</option>
+                                <option value="strong">Strong (600–749)</option>
+                                <option value="emerging">Emerging (450–599)</option>
+                                <option value="poor">High Risk (300–449)</option>
+                            </select>
+                        </div>
+                        <p class="text-[10px] text-slate-600 mt-2">Click any row in the table to view full vendor details</p>
+                    </div>
+                </div>
+
             </div>
         </aside>
 
-        <section class="col-span-12 lg:col-span-8" id="cards-container"></section>
+        <!-- RIGHT PANEL — Cards or Database -->
+        <section class="col-span-12 lg:col-span-8">
+
+            <!-- Cards view -->
+            <div id="cards-container"></div>
+
+            <!-- Database view -->
+            <div id="db-container" class="hidden">
+                <div class="spectrum-card rounded-2xl overflow-hidden">
+                    <div class="flex items-center justify-between px-4 py-3 border-b border-white/5">
+                        <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Vendor Database</p>
+                        <p class="text-[10px] font-bold text-indigo-400" id="db-count">— vendors</p>
+                    </div>
+                    <div style="overflow-x:auto">
+                        <table class="db-table">
+                            <thead>
+                                <tr>
+                                    <th onclick="sortDB('vendor_id')">ID <span class="sort-arrow" id="arr-vendor_id">↕</span></th>
+                                    <th onclick="sortDB('flowscore')">Score <span class="sort-arrow active" id="arr-flowscore">↓</span></th>
+                                    <th>Decision</th>
+                                    <th onclick="sortDB('avg_weekly_transactions')">Txns/wk <span class="sort-arrow" id="arr-avg_weekly_transactions">↕</span></th>
+                                    <th onclick="sortDB('monthly_inflow')">Monthly Inflow <span class="sort-arrow" id="arr-monthly_inflow">↕</span></th>
+                                    <th onclick="sortDB('income_volatility')">Volatility <span class="sort-arrow" id="arr-income_volatility">↕</span></th>
+                                </tr>
+                            </thead>
+                            <tbody id="db-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </section>
     </div>
 
 <script>
-    const container = document.getElementById('cards-container');
+    const container   = document.getElementById('cards-container');
+    const dbContainer = document.getElementById('db-container');
 
+    let dbSortBy    = 'flowscore';
+    let dbSortOrder = 'desc';
+
+    // ── Tab switching ──────────────────────────────────────
     function switchTab(tab) {
         document.getElementById('panel-id').classList.toggle('hidden',     tab !== 'id');
         document.getElementById('panel-filter').classList.toggle('hidden', tab !== 'filter');
+        document.getElementById('panel-db').classList.toggle('hidden',     tab !== 'db');
         document.getElementById('tab-id').classList.toggle('active',       tab === 'id');
         document.getElementById('tab-filter').classList.toggle('active',   tab === 'filter');
+        document.getElementById('tab-db').classList.toggle('active',       tab === 'db');
+
+        // Show/hide right panel
+        if (tab === 'db') {
+            container.classList.add('hidden');
+            dbContainer.classList.remove('hidden');
+            loadDatabase();
+        } else {
+            container.classList.remove('hidden');
+            dbContainer.classList.add('hidden');
+        }
     }
 
-    function clearAll() {
-        container.innerHTML = '';
-    }
+    function clearAll() { container.innerHTML = ''; }
 
+    // ── Vendor ID form ─────────────────────────────────────
     document.getElementById('form-id').onsubmit = async (e) => {
         e.preventDefault();
         const errEl    = document.getElementById('error-id');
@@ -247,11 +371,12 @@
         if (data) { addCard(data, true); document.getElementById('form-id').reset(); }
     };
 
+    // ── Risk filter form ───────────────────────────────────
     document.getElementById('form-filter').onsubmit = async (e) => {
         e.preventDefault();
-        const errEl  = document.getElementById('error-filter');
+        const errEl     = document.getElementById('error-filter');
         errEl.classList.add('hidden');
-        const filter = document.getElementById('risk-filter').value;
+        const filter    = document.getElementById('risk-filter').value;
         const topN      = parseInt(document.getElementById('top-n').value) || 5;
         const sortOrder = document.getElementById('sort-order').value;
         try {
@@ -261,11 +386,7 @@
             });
             const data = await res.json();
             if (data.error) { errEl.textContent = data.error; errEl.classList.remove('hidden'); return; }
-            if (data.vendors.length === 0) {
-                errEl.textContent = 'No vendors found in that category.';
-                errEl.classList.remove('hidden');
-                return;
-            }
+            if (data.vendors.length === 0) { errEl.textContent = 'No vendors found.'; errEl.classList.remove('hidden'); return; }
             container.innerHTML = '';
             data.vendors.forEach(v => addCard(v, false));
         } catch (err) {
@@ -274,6 +395,71 @@
         }
     };
 
+    // ── Database ───────────────────────────────────────────
+    async function loadDatabase() {
+        const search = document.getElementById('db-search').value;
+        const filter = document.getElementById('db-filter').value;
+        try {
+            const res  = await fetch('/database', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ search, filter, sort_by: dbSortBy, sort_order: dbSortOrder })
+            });
+            const data = await res.json();
+            document.getElementById('db-count').textContent = `${data.total} vendors`;
+            renderTable(data.vendors);
+        } catch (err) {
+            console.log('Database load failed');
+        }
+    }
+
+    function sortDB(col) {
+        if (dbSortBy === col) {
+            dbSortOrder = dbSortOrder === 'desc' ? 'asc' : 'desc';
+        } else {
+            dbSortBy    = col;
+            dbSortOrder = 'desc';
+        }
+        // Update arrows
+        document.querySelectorAll('.sort-arrow').forEach(el => {
+            el.classList.remove('active');
+            el.textContent = '↕';
+        });
+        const arr = document.getElementById(`arr-${col}`);
+        if (arr) { arr.classList.add('active'); arr.textContent = dbSortOrder === 'desc' ? '↓' : '↑'; }
+        loadDatabase();
+    }
+
+    function renderTable(vendors) {
+        const tbody = document.getElementById('db-tbody');
+        tbody.innerHTML = '';
+        vendors.forEach(v => {
+            const score    = v.flowscore;
+            const isBorder = score >= 550 && score < 600;
+            let badgeClass = 'badge-poor';
+            let label      = 'High Risk';
+            if      (isBorder)    { badgeClass = 'badge-review';   label = '⚠ Review'; }
+            else if (score >= 750) { badgeClass = 'badge-elite';    label = 'Elite'; }
+            else if (score >= 600) { badgeClass = 'badge-strong';   label = 'Strong'; }
+            else if (score >= 450) { badgeClass = 'badge-emerging'; label = 'Emerging'; }
+
+            const tr = document.createElement('tr');
+            tr.onclick = () => {
+                switchTab('id');
+                addCard(v, true);
+            };
+            tr.innerHTML = `
+                <td class="font-bold text-white">#${v.vendor_id}</td>
+                <td class="font-black text-white">${score}</td>
+                <td><span class="badge ${badgeClass}">${label}</span></td>
+                <td>${v.raw_values.avg_weekly_transactions}</td>
+                <td>₹${v.raw_values.monthly_inflow.toLocaleString()}</td>
+                <td>${v.raw_values.income_volatility}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // ── Fetch single vendor ────────────────────────────────
     async function fetchVendor(vendorId, errEl) {
         try {
             const res = await fetch('/predict', {
@@ -281,7 +467,7 @@
                 body: JSON.stringify({ vendor_id: vendorId })
             });
             if (res.status === 404) {
-                errEl.textContent = `Vendor ID ${vendorId} not found. Try 1–1000.`;
+                errEl.textContent = `Vendor ID ${vendorId} not found.`;
                 errEl.classList.remove('hidden');
                 return null;
             }
@@ -295,6 +481,7 @@
         }
     }
 
+    // ── Add card ───────────────────────────────────────────
     function addCard(data, prepend) {
         const score = data.flowscore;
         const raw   = data.raw_values;
@@ -303,8 +490,8 @@
 
         const nTxns  = Math.min(raw.avg_weekly_transactions / 50, 1);
         const nMerch = Math.min(raw.unique_merchants / 20, 1);
-        const stab   = met["Income stability"]        / 100;
-        const sav    = met["Savings behaviour"]       / 100;
+        const stab   = met["Income stability"]  / 100;
+        const sav    = met["Savings behaviour"] / 100;
 
         let glow = "glow-risk";
         if      (score >= 750) glow = "glow-prime";
@@ -314,6 +501,10 @@
         const uid    = `${data.vendor_id}-${Date.now()}`;
         const cardId = `card-${uid}`;
         const calcId = `calc-${uid}`;
+
+        const isBorderline  = score >= 550 && score < 600;
+        const decisionLabel = isBorderline ? '⚠ NEEDS REVIEW' : data.decision;
+        const decisionColor = isBorderline ? 'text-amber-400' : 'text-slate-500';
 
         const card = document.createElement('div');
         card.className = `spectrum-card rounded-[1.25rem] cursor-pointer group mb-4 transition-all p-4 ${glow}`;
@@ -334,7 +525,7 @@
                 <div class="flex items-center gap-8">
                     <div class="text-right">
                         <div class="text-3xl font-black text-white italic tracking-tighter">${score}</div>
-                        <p class="text-[9px] font-bold uppercase tracking-widest ${score >= 550 && score < 600 ? 'text-amber-400' : 'text-slate-500'}">${score >= 550 && score < 600 ? '⚠ NEEDS REVIEW' : data.decision}</p>
+                        <p class="text-[9px] font-bold uppercase tracking-widest ${decisionColor}">${decisionLabel}</p>
                     </div>
                     <i class="fas fa-chevron-down text-slate-700 transition-colors"></i>
                 </div>
@@ -370,7 +561,6 @@
                     <div class="calc-section" id="${calcId}">
                         <div class="calc-inner">
                             <div style="background:rgba(0,0,0,0.35);border-radius:12px;padding:14px;margin-top:8px;border:1px solid rgba(255,255,255,0.05)">
-
                                 <div class="section-label">Raw UPI Data</div>
                                 <table class="calc-table">
                                     <tr><td>avg_weekly_transactions</td><td></td><td>${raw.avg_weekly_transactions}</td></tr>
@@ -380,7 +570,6 @@
                                     <tr><td>savings_ratio</td><td></td><td>${raw.savings_ratio}</td></tr>
                                     <tr><td>bill_payment_timing</td><td></td><td>${raw.bill_payment_timing}</td></tr>
                                 </table>
-
                                 <hr class="divider">
                                 <div class="section-label">Feature Engineering</div>
                                 <table class="calc-table">
@@ -390,14 +579,12 @@
                                     <tr><td>savings_score</td><td>${raw.savings_ratio}</td><td>${eng.savings_score}</td></tr>
                                     <tr><td>temporal_score</td><td>${raw.bill_payment_timing}</td><td>${eng.temporal_score}</td></tr>
                                 </table>
-
                                 <hr class="divider">
                                 <div class="section-label">FlowScore Calculation</div>
                                 <table class="calc-table">
                                     <tr><td>XGBoost probability</td><td></td><td>${data.prob}</td></tr>
                                     <tr><td>FlowScore</td><td>300 + (${data.prob} × 600)</td><td style="color:#818cf8;font-size:14px">${score}</td></tr>
                                 </table>
-
                             </div>
                         </div>
                     </div>
@@ -441,6 +628,18 @@
         else if (s < 750)  return "Steady performance with healthy merchant diversity. This business is a safe candidate for standard credit and moderate growth support.";
         else               return "Exceptional financial health and discipline. Business demonstrates high-tier stability and is ready for full-scale premium support.";
     }
+
+    async function loadStats() {
+        try {
+            const res  = await fetch('/stats');
+            const data = await res.json();
+            document.getElementById('stat-elite').textContent    = data.elite;
+            document.getElementById('stat-strong').textContent   = data.strong;
+            document.getElementById('stat-emerging').textContent = data.emerging;
+            document.getElementById('stat-poor').textContent     = data.poor;
+        } catch (err) { console.log('Could not load stats'); }
+    }
+    loadStats();
 </script>
 </body>
 </html>

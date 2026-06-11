@@ -68,7 +68,7 @@ def score_vendor(vendor):
         }
     }
 
-# ── Pre-compute all vendor scores on startup ───────────────
+# Pre-compute all vendor scores on startup
 print("Pre-computing all vendor scores...")
 _df            = pd.read_csv(os.path.join(DATA_DIR, 'upi_transactions.csv'))
 ALL_SCORES     = [score_vendor(row) for _, row in _df.iterrows()]
@@ -95,9 +95,10 @@ def predict():
 @app.route("/filter", methods=["POST"])
 def filter_vendors():
     try:
-        data   = request.json
-        filter = data.get("filter", "all")
-        top_n  = int(data.get("top_n", 5))
+        data       = request.json
+        filter     = data.get("filter", "all")
+        top_n      = int(data.get("top_n", 5))
+        sort_order = data.get("sort_order", "desc")
 
         ranges = {
             "elite":    (750, 900),
@@ -108,10 +109,52 @@ def filter_vendors():
         }
         lo, hi   = ranges.get(filter, (300, 900))
         filtered = [v for v in ALL_SCORES if lo <= v["flowscore"] <= hi]
-        sort_order = data.get("sort_order", "desc")
-        filtered   = sorted(filtered, key=lambda x: x["flowscore"], reverse=(sort_order == "desc"))[:top_n]
+        filtered = sorted(filtered, key=lambda x: x["flowscore"], reverse=(sort_order == "desc"))[:top_n]
         return jsonify({"vendors": filtered})
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"error": str(e)}), 500
 
+@app.route("/stats", methods=["GET"])
+def stats():
+    elite    = len([v for v in ALL_SCORES if v["flowscore"] >= 750])
+    strong   = len([v for v in ALL_SCORES if 600 <= v["flowscore"] < 750])
+    emerging = len([v for v in ALL_SCORES if 450 <= v["flowscore"] < 600])
+    poor     = len([v for v in ALL_SCORES if v["flowscore"] < 450])
+    return jsonify({
+        "elite": elite, "strong": strong,
+        "emerging": emerging, "poor": poor,
+        "total": len(ALL_SCORES)
+    })
+
+@app.route("/database", methods=["POST"])
+def database():
+    try:
+        data       = request.json
+        search     = str(data.get("search", "")).strip()
+        sort_by    = data.get("sort_by", "flowscore")
+        sort_order = data.get("sort_order", "desc")
+        filter_cat = data.get("filter", "all")
+
+        ranges = {
+            "elite":    (750, 900),
+            "strong":   (600, 749),
+            "emerging": (450, 599),
+            "poor":     (300, 449),
+            "all":      (300, 900)
+        }
+        lo, hi  = ranges.get(filter_cat, (300, 900))
+        results = [v for v in ALL_SCORES if lo <= v["flowscore"] <= hi]
+
+        if search:
+            results = [v for v in results if str(v["vendor_id"]).startswith(search)]
+
+        if sort_by == "flowscore":
+            results = sorted(results, key=lambda x: x["flowscore"], reverse=(sort_order == "desc"))
+        else:
+            results = sorted(results, key=lambda x: x["raw_values"].get(sort_by, 0), reverse=(sort_order == "desc"))
+
+        return jsonify({"vendors": results, "total": len(results)})
     except Exception as e:
         print(f"Error: {e}")
         return jsonify({"error": str(e)}), 500
